@@ -3,6 +3,7 @@
 
 import string
 import os 
+import sys
 import glob
 import numpy as np
 
@@ -25,38 +26,54 @@ def filesPerCore(fileList, ncores):
 ########################################################################
 
 # clone map files that will be used
-fileList = glob.glob('/projects/dfguu/data/hydroworld/others/05ArcMinCloneMaps/new_masks_from_top/clone_M*.map')
+fileList = glob.glob('/scratch-shared/dfguu/data/hydroworld/others/05ArcMinCloneMaps/new_masks_from_top/clone_M*.map')
 
 # typical ini files
-dummy_ini_filename = '/home/edwinhs/github/edwinkost/PCR-GLOBWB/config/runs_5min_nov_2014/test_at_cartesius/setup_dummy_natural_re-run.ini'
+dummy_ini_filename = '/home/edwinhs/github/edwinkost/PCR-GLOBWB/config/setup_dummy.ini'
+try:
+	dummy_ini_filename = str(sys.argv[2])
+except:
+	pass	
 dummy =  open(dummy_ini_filename,'r').read()
 
 # output directories for model results
-outputDirRoot  = '/projects/wtrcycle/users/edwinhs/05min_runs_28_november_2014/multi_cores_natural_1960_to_2010/%s/'
+outputDirRoot  = '/projects/wtrcycle/users/edwinhs/multi_cores_1960_to_2010/%s/'
+try:
+	outputDirRoot = str(sys.argv[3])+'/%s/'
+except:
+	pass	
 
 #-output directory for ini files and batch files 
-batchFilePath  = '/home/edwinhs/jobs/multi_core_jobs_28_nov_2014/natural/batch_files/'
-iniFilesPath   = '/home/edwinhs/jobs/multi_core_jobs_28_nov_2014/natural/ini_files/'
+batchFilePath  = '/home/edwinhs/jobs/multi_core_jobs/batch_files/'
+iniFilesPath   = '/home/edwinhs/jobs/multi_core_jobs/ini_files/'
+try:
+	batchFilePath = str(sys.argv[4])+'/batch_files/'
+	iniFilePath   = str(sys.argv[4])+'/ini_files/'
+except:
+	pass	
 
 # master job file (that will be submitted as a cartesius job)
-masterBatchFile = 'natural_1960_to_2010.sh'
+masterBatchFile = 'jobs.sh'
+try:
+	masterBatchFile = str(sys.argv[5])
+except:
+	pass	
 
 # main python file/script to run the model
 modelScriptFolderInAbsolutePath = "/home/edwinhs/github/edwinkost/PCR-GLOBWB/model/"
 modelFileName  = modelScriptFolderInAbsolutePath+'deterministic_runner.py'
 
 # to be writen in the ini files: file names for clone, landMask and ldd:
-cloneMapPath   = '/projects/dfguu/data/hydroworld/others/05ArcMinCloneMaps/new_masks_from_top/clone_%s.map'
-landmaskPath   = '/projects/dfguu/data/hydroworld/others/05ArcMinCloneMaps/new_masks_from_top/mask_%s.map'  
+cloneMapPath   = '/scratch-shared/dfguu/data/hydroworld/others/05ArcMinCloneMaps/new_masks_from_top/clone_%s.map'
+landmaskPath   = '/scratch-shared/dfguu/data/hydroworld/others/05ArcMinCloneMaps/new_masks_from_top/mask_%s.map'  
 
 # number of cores that will be used
 ncores = 53 # from 53 maks
 
-
 # walltime, number and type of node:
 wall_time      = '119:50:00' # '50:00'            # '119:50:00'
 number_of_node =  1          # 1                  # 1           #
-type_of_node   = 'fat'       # 'short'            # 'fat'       # options are fat, normal and short
+type_of_node   = 'normal'    # 'short'            # 'fat'       # options are fat, normal and short
 
 # preparing directories:
 try:
@@ -89,7 +106,10 @@ outMaster.write(masterLine)
 masterLine = '#SBATCH -t %s\n' % (wall_time)
 outMaster.write(masterLine)  
 masterLine = '#SBATCH -p %s\n' % (type_of_node)
-outMaster.write(masterLine)  
+outMaster.write(masterLine)
+if type_of_node  == 'normal':  
+	masterLine = '#SBATCH --constraint=haswell\n'
+	outMaster.write(masterLine)  
 for coreIdx in cores:
 	#-fill master batch file with bash command that starts a single core
 	masterLine = 'bash %s & \n' % os.path.join(batchFileBase % (ncores, coreIdx))
@@ -129,6 +149,7 @@ for coreIdx in cores:
 		# write python command line
 		#~ batchLine = 'numactl --localalloc --physcpubind=%s python /home/beek0120/PCR-GLOBWB/scripts/twoLayersNewSoilParams/PCR-GLOBWB_TwoLayers.py %s\n' % (coreIdx, iniOutputName)
 		#~ batchLine = 'numactl --localalloc --physcpubind=%s python %s %s\n' % (coreIdx, modelFileName, iniOutputName)
+		
 		batchLine = 'python %s %s\n' % (modelFileName, iniOutputName)
 		batchOutFile.write(batchLine)
 
