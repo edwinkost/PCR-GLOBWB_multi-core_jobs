@@ -31,7 +31,7 @@ fileList = glob.glob('/scratch-shared/dfguu/data/hydroworld/others/05ArcMinClone
 # typical ini files
 dummy_ini_filename = '/home/edwinhs/github/edwinkost/PCR-GLOBWB/config/setup_dummy.ini'
 try:
-	dummy_ini_filename = str(sys.argv[2])
+	dummy_ini_filename = str(sys.argv[1])
 except:
 	pass	
 dummy =  open(dummy_ini_filename,'r').read()
@@ -39,7 +39,7 @@ dummy =  open(dummy_ini_filename,'r').read()
 # output directories for model results
 outputDirRoot  = '/projects/wtrcycle/users/edwinhs/multi_cores_1960_to_2010/%s/'
 try:
-	outputDirRoot = str(sys.argv[3])+'/%s/'
+	outputDirRoot = str(sys.argv[2])+'/%s/'
 except:
 	pass	
 
@@ -47,15 +47,15 @@ except:
 batchFilePath  = '/home/edwinhs/jobs/multi_core_jobs/batch_files/'
 iniFilesPath   = '/home/edwinhs/jobs/multi_core_jobs/ini_files/'
 try:
-	batchFilePath = str(sys.argv[4])+'/batch_files/'
-	iniFilePath   = str(sys.argv[4])+'/ini_files/'
+	batchFilePath = str(sys.argv[3])+'/batch_files/'
+	iniFilePath   = str(sys.argv[3])+'/ini_files/'
 except:
 	pass	
 
 # master job file (that will be submitted as a cartesius job)
 masterBatchFile = 'jobs.sh'
 try:
-	masterBatchFile = str(sys.argv[5])
+	masterBatchFile = str(sys.argv[4])
 except:
 	pass	
 
@@ -155,3 +155,5 @@ for coreIdx in cores:
 
 		batchOutFile.close()
 		print 'creating %s  and line added to %s' %(iniOutputName, batchFileNameCore)
+
+
