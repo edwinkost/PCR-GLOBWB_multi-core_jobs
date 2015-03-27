@@ -48,7 +48,7 @@ batchFilePath  = '/home/edwinhs/jobs/multi_core_jobs/batch_files/'
 iniFilesPath   = '/home/edwinhs/jobs/multi_core_jobs/ini_files/'
 try:
 	batchFilePath = str(sys.argv[3])+'/batch_files/'
-	iniFilePath   = str(sys.argv[3])+'/ini_files/'
+	iniFilesPath  = str(sys.argv[3])+'/ini_files/'
 except:
 	pass	
 
