@@ -26,7 +26,7 @@ def filesPerCore(fileList, ncores):
 ########################################################################
 
 # clone map files that will be used
-fileList = glob.glob('/scratch-shared/dfguu/data/hydroworld/others/05ArcMinCloneMaps/new_masks_from_top/clone_M*.map')
+fileList = glob.glob('/projects/0/dfguu/data/hydroworld/others/05ArcMinCloneMaps/new_masks_from_top/clone_M*.map')
 
 # typical ini files
 dummy_ini_filename = '/home/edwinhs/github/edwinkost/PCR-GLOBWB/config/setup_dummy.ini'
